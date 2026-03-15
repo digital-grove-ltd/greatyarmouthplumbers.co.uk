@@ -1,0 +1,9 @@
+name = "greatyarmouth-plumbers"
+compatibility_date = "2024-12-20"
+
+pages_build_output_dir = "dist"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "yarmouth-leads"
+database_id = "3d41779e-21f9-43fb-a286-89ee1d367172"

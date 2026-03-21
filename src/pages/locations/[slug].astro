@@ -5,6 +5,7 @@ import SeoFaq from '../../components/SeoFaq.astro';
 import SeoTestimonials from '../../components/SeoTestimonials.astro';
 import { Icon } from 'astro-icon/components';
 import { business, yearsInBusiness } from '../../data/business';
+import LocationMap from '../../components/LocationMap.astro';
 import { serviceTypes } from '../../data/serviceTypes';
 import { serviceAreas, getAreaBySlug, getNearbyAreas } from '../../data/serviceAreas';
 import { generateFaqs, getReviewsForPage } from '../../data/seoContent';
@@ -12,11 +13,11 @@ import { comboUrl, areaUrl, contactUrl } from '../../lib/urls';
 
 export function getStaticPaths() {
   return serviceAreas.map((a) => ({
-    params: { area: a.slug },
+    params: { slug: a.slug },
   }));
 }
 
-const { area: areaSlug } = Astro.params;
+const { slug: areaSlug } = Astro.params;
 const area = getAreaBySlug(areaSlug);
 if (!area) throw new Error(`Area not found: ${areaSlug}`);
 
@@ -135,6 +136,14 @@ const breadcrumbs = [
           We cover all postcodes in {area.name} ({area.zipCodes.join(', ')}), with a typical response time of {area.responseTime}. Whether it is a leaking tap at midnight or a boiler installation during the week, you can count on us to be there.
         </p>
       </div>
+    </div>
+  </section>
+
+  <!-- Location map -->
+  <section class="bg-gray-50 py-16">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6">Where we cover in {area.name}</h2>
+      <LocationMap lat={area.lat} lng={area.lng} locationName={area.name} />
     </div>
   </section>
 

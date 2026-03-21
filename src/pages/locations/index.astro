@@ -11,7 +11,7 @@ const description = 'Great Yarmouth Plumbers serves homes and businesses across 
 
 const breadcrumbs = [
   { label: 'Home', href: '/' },
-  { label: 'Areas' },
+  { label: 'Locations' },
 ];
 
 const primary = serviceAreas.filter((a) => a.priority === 'primary');
@@ -26,12 +26,12 @@ const tertiary = serviceAreas.filter((a) => a.priority === 'tertiary');
       '@type': 'WebPage',
       name: title,
       description: description,
-      url: `${business.website}/areas/`,
+      url: `${business.website}/locations/`,
       breadcrumb: {
         '@type': 'BreadcrumbList',
         itemListElement: [
           { '@type': 'ListItem', position: 1, name: 'Home', item: business.website },
-          { '@type': 'ListItem', position: 2, name: 'Areas', item: `${business.website}/areas/` },
+          { '@type': 'ListItem', position: 2, name: 'Locations', item: `${business.website}/locations/` },
         ],
       },
     })} />

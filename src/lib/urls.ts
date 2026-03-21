@@ -11,9 +11,9 @@ export function serviceUrl(serviceSlug: string): string {
   return `/services/${serviceSlug}/`;
 }
 
-/** Single-area page, e.g. /areas/great-yarmouth/ */
+/** Single-area page, e.g. /locations/great-yarmouth/ */
 export function areaUrl(areaSlug: string): string {
-  return `/areas/${areaSlug}/`;
+  return `/locations/${areaSlug}/`;
 }
 
 /** Combo (area + service) page, e.g. /services/great-yarmouth/leak-repair/ */

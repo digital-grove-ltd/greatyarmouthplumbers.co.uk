@@ -3,6 +3,7 @@ import SEO from '../components/SEO.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import '../styles/global.css';
+import { BRAND } from '../data/brand';
 
 export interface Props {
   title: string;
@@ -14,11 +15,6 @@ export interface Props {
 }
 
 const { title, description, canonicalUrl, ogImage, schema, noindex } = Astro.props;
-
-// TODO: Add Google Analytics once a real GA4 Measurement ID is available.
-// Paste the gtag.js snippet below the font <link> tags in the <head>, e.g.:
-//   <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
-//   <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-XXXXXXXXXX');</script>
 ---
 
 <!doctype html>
@@ -58,6 +54,50 @@ const { title, description, canonicalUrl, ogImage, schema, noindex } = Astro.pro
     />
 
     <slot name="head" />
+
+    <!-- GA4 with Consent Mode -->
+    <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin />
+    <link rel="dns-prefetch" href="https://www.google-analytics.com" />
+
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('consent', 'default', {
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied',
+        analytics_storage: 'denied',
+        wait_for_update: 500
+      });
+      try {
+        var consentChoice = localStorage.getItem('cookie_consent');
+        if (consentChoice === 'accepted') {
+          gtag('consent', 'update', {
+            ad_storage: 'granted',
+            ad_user_data: 'granted',
+            ad_personalization: 'granted',
+            analytics_storage: 'granted'
+          });
+        }
+      } catch (e) {}
+    </script>
+    <script is:inline define:vars={{ ga4Id: BRAND.ga4Id }}>
+      if (ga4Id) {
+        function loadGTM() {
+          var s = document.createElement('script');
+          s.src = 'https://www.googletagmanager.com/gtag/js?id=' + ga4Id;
+          s.async = true;
+          document.head.appendChild(s);
+          gtag('js', new Date());
+          gtag('config', ga4Id);
+        }
+        if (typeof requestIdleCallback === 'function') {
+          requestIdleCallback(loadGTM, { timeout: 3000 });
+        } else {
+          setTimeout(loadGTM, 2000);
+        }
+      }
+    </script>
   </head>
 
   <body class="min-h-screen flex flex-col font-body text-stone-800 bg-white antialiased">
@@ -68,5 +108,45 @@ const { title, description, canonicalUrl, ogImage, schema, noindex } = Astro.pro
     </main>
 
     <Footer />
+
+    <div id="cookie-banner" class="fixed bottom-0 left-0 right-0 z-[60] bg-white border-t border-stone-200 shadow-lg p-4 hidden" role="dialog" aria-label="Cookie consent">
+      <div class="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <p class="text-sm text-stone-600">We use cookies to analyse site traffic and improve your experience. See our <a href="/cookies/" class="underline">cookie policy</a>.</p>
+        <div class="flex gap-2">
+          <button id="cookie-reject" class="border border-stone-300 bg-transparent font-semibold px-4 py-2 rounded-lg hover:bg-stone-100 transition-all cursor-pointer text-sm">Reject</button>
+          <button id="cookie-accept" class="bg-blue-900 text-white font-semibold px-4 py-2 rounded-lg hover:bg-blue-800 transition-all cursor-pointer text-sm">Accept</button>
+        </div>
+      </div>
+    </div>
+
+    <script is:inline>
+      (function () {
+        var banner = document.getElementById('cookie-banner');
+        try {
+          var consent = localStorage.getItem('cookie_consent');
+          if (!consent && banner) banner.classList.remove('hidden');
+        } catch (e) {
+          if (banner) banner.classList.remove('hidden');
+        }
+
+        document.getElementById('cookie-accept')?.addEventListener('click', function () {
+          try { localStorage.setItem('cookie_consent', 'accepted'); } catch (e) {}
+          if (typeof gtag === 'function') {
+            gtag('consent', 'update', {
+              ad_storage: 'granted',
+              ad_user_data: 'granted',
+              ad_personalization: 'granted',
+              analytics_storage: 'granted',
+            });
+          }
+          banner?.classList.add('hidden');
+        });
+
+        document.getElementById('cookie-reject')?.addEventListener('click', function () {
+          try { localStorage.setItem('cookie_consent', 'rejected'); } catch (e) {}
+          banner?.classList.add('hidden');
+        });
+      })();
+    </script>
   </body>
 </html>

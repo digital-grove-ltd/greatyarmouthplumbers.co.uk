@@ -6,7 +6,8 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "test": "vitest run --passWithNoTests"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.0",
@@ -18,6 +19,7 @@
   },
   "devDependencies": {
     "@iconify-json/lucide": "^1.2.91",
-    "wrangler": "^4.0.0"
+    "wrangler": "^4.0.0",
+    "vitest": "^4.0.18"
   }
 }

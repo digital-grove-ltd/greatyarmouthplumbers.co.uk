@@ -1,8 +1,10 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
+// @astrojs/sitemap removed — replaced by custom split sitemaps
+// See src/pages/sitemap-index.xml.ts, sitemap-pages.xml.ts,
+// sitemap-services.xml.ts, sitemap-locations.xml.ts, sitemap-blog.xml.ts
 import tailwindcss from '@tailwindcss/vite';
 
-import sitemap from '@astrojs/sitemap';
 import icon from 'astro-icon';
 
 export default defineConfig({
@@ -13,41 +15,6 @@ export default defineConfig({
 
   integrations: [
     icon(),
-    sitemap({
-      filter: (page) =>
-        !page.includes('/admin/') &&
-        !page.includes('/api/') &&
-        !page.includes('/blog/'),
-      serialize(item) {
-        const lastmod = new Date().toISOString().split('T')[0];
-        if (item.url === 'https://greatyarmouthplumbers.co.uk/') {
-          item.priority = 1.0;
-          item.changefreq = 'weekly';
-          item.lastmod = lastmod;
-        } else if (/\/(services|locations)\/$/.test(item.url)) {
-          item.priority = 0.9;
-          item.changefreq = 'weekly';
-          item.lastmod = lastmod;
-        } else if (/\/services\/[^/]+\/$/.test(item.url) && !/\/services\/[^/]+\/[^/]+\//.test(item.url)) {
-          item.priority = 0.8;
-          item.changefreq = 'weekly';
-          item.lastmod = lastmod;
-        } else if (/\/locations\/[^/]+\/$/.test(item.url)) {
-          item.priority = 0.8;
-          item.changefreq = 'weekly';
-          item.lastmod = lastmod;
-        } else if (/\/services\/[^/]+\/[^/]+\/$/.test(item.url)) {
-          item.priority = 0.6;
-          item.changefreq = 'monthly';
-          item.lastmod = lastmod;
-        } else {
-          item.priority = 0.5;
-          item.changefreq = 'monthly';
-          item.lastmod = lastmod;
-        }
-        return item;
-      },
-    }),
   ],
 
   vite: {

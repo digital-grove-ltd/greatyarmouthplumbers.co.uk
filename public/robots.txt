@@ -1,4 +1,50 @@
-User-agent: *
+# Greatyarmouthplumbers - robots.txt
+# https://greatyarmouthplumbers.co.uk
+# Last updated: 2026-04-16
+
+# ==============================================
+# AI CRAWLER POLICIES
+# ==============================================
+# Allowed: All AI search crawlers for maximum visibility
+#   - GPTBot (ChatGPT search), Google-Extended (AI Overviews)
+#   - PerplexityBot, Claude-Web, Anthropic-AI, Applebot-Extended
+# Blocked: Training-only scrapers (no search benefit)
+#   - CCBot, cohere-ai
+# ==============================================
+
+# Block AI training scrapers (no search visibility benefit)
+User-agent: CCBot
+Disallow: /
+
+User-agent: cohere-ai
+Disallow: /
+
+# Explicitly allow AI search crawlers
+User-agent: GPTBot
+Allow: /
+Disallow: /admin
+Disallow: /_astro/
+
+User-agent: Google-Extended
 Allow: /
 
+User-agent: Applebot-Extended
+Allow: /
+
+# ==============================================
+# DEFAULT RULES (all other crawlers)
+# ==============================================
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /admin/
+Disallow: /login
+Disallow: /reset-password
+Disallow: /status
+Disallow: /_astro/
+
+# Sitemap location
 Sitemap: https://greatyarmouthplumbers.co.uk/sitemap-index.xml
+
+# Host preference (canonical non-www HTTPS)
+Host: https://greatyarmouthplumbers.co.uk

@@ -5,20 +5,21 @@
 
 import type { APIRoute } from 'astro';
 import { BRAND } from '../data/brand';
-import { SERVICES } from '../data/services';
-import { INDEXED_LOCATIONS } from '../data/locations';
-import { BLOG_POSTS } from '../data/blog';
+import { serviceTypes } from '../data/serviceTypes';
+import { serviceAreas } from '../data/serviceAreas';
+import { getCollection } from 'astro:content';
 
 export const prerender = true;
 
-export const GET: APIRoute = () => {
+export const GET: APIRoute = async () => {
   const base = `https://${BRAND.domain}`;
 
-  // 8 most recent posts
-  const recentPosts = [...BLOG_POSTS]
+  // 8 most recent blog posts
+  const allPosts = await getCollection('blog');
+  const recentPosts = allPosts
     .sort((a, b) =>
-      new Date(b.updatedDate ?? b.publishDate ?? 0).getTime() -
-      new Date(a.updatedDate ?? a.publishDate ?? 0).getTime()
+      new Date(b.data.publishDate ?? 0).getTime() -
+      new Date(a.data.publishDate ?? 0).getTime()
     )
     .slice(0, 8);
 
@@ -31,7 +32,7 @@ export const GET: APIRoute = () => {
 
   // ── About ────────────────────────────────────────────────────────────────
   lines.push(
-    `${BRAND.brandName} provides professional drain and plumbing services across ${BRAND.primaryLocation} and the surrounding area. ` +
+    `${BRAND.brandName} provides professional plumbing services across ${BRAND.primaryLocation} and the surrounding area. ` +
     `Available 24/7 for emergency callouts. Call ${BRAND.phoneFormatted} for immediate assistance.`
   );
   lines.push('');
@@ -39,24 +40,24 @@ export const GET: APIRoute = () => {
   // ── Core pages ───────────────────────────────────────────────────────────
   lines.push('## Core Pages');
   lines.push(`- [Home](${base}/): Overview of all services and coverage area`);
-  lines.push(`- [Services](${base}/services/): Full list of drain and plumbing services`);
+  lines.push(`- [Services](${base}/services/): Full list of plumbing services`);
   lines.push(`- [Locations](${base}/locations/): All towns and areas covered`);
-  lines.push(`- [Blog](${base}/blog/): Drain guides, tips, and local advice`);
+  lines.push(`- [Blog](${base}/plumbing-tips/): Plumbing guides, tips, and local advice`);
   lines.push(`- [Contact](${base}/contact/): Phone, email, and enquiry form`);
-  lines.push(`- [FAQ](${base}/frequently-asked-questions/): Common questions about blocked drains and costs`);
+  lines.push(`- [FAQ](${base}/faq/): Common questions about plumbing costs and services`);
   lines.push('');
 
   // ── Services ─────────────────────────────────────────────────────────────
   lines.push('## Services');
-  for (const svc of SERVICES) {
-    lines.push(`- [${svc.name}](${base}/services/${svc.slug}/): ${svc.shortLabel}`);
+  for (const svc of serviceTypes) {
+    lines.push(`- [${svc.name}](${base}/services/${svc.slug}/): ${svc.shortDescription}`);
   }
   lines.push('');
 
   // ── Coverage area ────────────────────────────────────────────────────────
   lines.push('## Coverage Area');
-  for (const loc of INDEXED_LOCATIONS) {
-    lines.push(`- [${loc.name}](${base}/locations/${loc.slug}/)`);
+  for (const area of serviceAreas) {
+    lines.push(`- [${area.name}](${base}/locations/${area.slug}/)`);
   }
   lines.push('');
 
@@ -64,8 +65,9 @@ export const GET: APIRoute = () => {
   if (recentPosts.length > 0) {
     lines.push('## Recent Blog Posts');
     for (const post of recentPosts) {
-      const date = post.publishDate ? ` (${post.publishDate.slice(0, 10)})` : '';
-      lines.push(`- [${post.title}](${base}/blog/${post.slug}/)${date}: ${post.excerpt.slice(0, 120).trimEnd()}…`);
+      const date = post.data.publishDate ? ` (${post.data.publishDate.slice(0, 10)})` : '';
+      const excerpt = post.data.description?.slice(0, 120).trimEnd() ?? '';
+      lines.push(`- [${post.data.title}](${base}/plumbing-tips/${post.slug}/)${date}: ${excerpt}…`);
     }
     lines.push('');
   }

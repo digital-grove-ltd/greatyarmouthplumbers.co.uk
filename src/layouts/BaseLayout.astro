@@ -27,6 +27,13 @@ const { title, description, canonicalUrl, ogImage, schema, noindex } = Astro.pro
     <link rel="apple-touch-icon" href="/images/greatyarmouthplumbers-logo.png" />
     <meta name="theme-color" content="#1e3a8a" />
 
+    <style>
+      *,::before,::after{box-sizing:border-box}
+      body{margin:0;min-height:100vh;display:flex;flex-direction:column;background:#fafaf9;color:#1c1917;font-family:'DM Sans','Helvetica Neue',Arial,sans-serif;-webkit-font-smoothing:antialiased}
+      header{background:#fff;border-bottom:1px solid #e7e5e4;position:sticky;top:0;z-index:50}
+      .bg-gradient-to-br.from-brand-900{background:linear-gradient(to bottom right,#1e3a8a,#1e40af)}
+      h1,h2,h3{font-family:'DM Serif Display',Georgia,serif;font-weight:700}
+    </style>
     <!-- Google Fonts: DM Serif Display + DM Sans (non-render-blocking) -->
     <link rel="preload" as="font" type="font/woff2" crossorigin href="https://fonts.gstatic.com/s/dmserifdisplay/v17/-nFnOHM81r4j6k0gjAW3mujVU2B2G_Bx0vrx52g.woff2" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />

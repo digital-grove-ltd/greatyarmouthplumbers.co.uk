@@ -1,11 +1,10 @@
 // src/pages/sitemap-blog.xml.ts
-// Blog index + all blog posts
-// Uses real publish/updated dates from blog post data — the only sitemap
-// with accurate per-URL lastmod rather than staggered build-time dates
+// Blog index + all blog posts from Astro content collections
+// Uses real publish dates from blog post front matter
 
 import type { APIRoute } from 'astro';
 import { BRAND } from '../data/brand';
-import { BLOG_POSTS } from '../data/blog';
+import { getCollection } from 'astro:content';
 
 export const prerender = true;
 
@@ -18,32 +17,32 @@ function toDateString(date: string | undefined): string {
   }
 }
 
-export const GET: APIRoute = () => {
+export const GET: APIRoute = async () => {
   const base = `https://${BRAND.domain}`;
 
-  // Sort newest first
-  const sorted = [...BLOG_POSTS].sort((a, b) =>
-    new Date(b.updatedDate ?? b.publishDate ?? 0).getTime() -
-    new Date(a.updatedDate ?? a.publishDate ?? 0).getTime()
+  const allPosts = await getCollection('blog');
+  const sorted = allPosts.sort((a, b) =>
+    new Date(b.data.publishDate ?? 0).getTime() -
+    new Date(a.data.publishDate ?? 0).getTime()
   );
 
   // Blog index lastmod = most recent post's date
   const newestDate = sorted[0]
-    ? toDateString(sorted[0].updatedDate ?? sorted[0].publishDate)
+    ? toDateString(sorted[0].data.publishDate)
     : new Date().toISOString().split('T')[0];
 
   const urls: string[] = [
     `  <url>
-    <loc>${base}/blog/</loc>
+    <loc>${base}/plumbing-tips/</loc>
     <lastmod>${newestDate}</lastmod>
     <priority>0.7</priority>
   </url>`,
   ];
 
   for (const post of sorted) {
-    const lastmod = toDateString(post.updatedDate ?? post.publishDate);
+    const lastmod = toDateString(post.data.publishDate);
     urls.push(`  <url>
-    <loc>${base}/blog/${post.slug}/</loc>
+    <loc>${base}/plumbing-tips/${post.slug}/</loc>
     <lastmod>${lastmod}</lastmod>
     <priority>0.6</priority>
   </url>`);
